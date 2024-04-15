@@ -1,27 +1,25 @@
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
+#define GPIO_PIN 2 // GPIO2 is connected to pin 2 on ESP-01
+
+
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
-
-
-
-
-
+  pinMode(GPIO_PIN, OUTPUT);
   
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+// Activate GPIO2
+  Serial.print("Activate pump");
+  digitalWrite(GPIO_PIN, HIGH);
+  delay(4000); // Wait for 4 seconds
+  // Deactivate GPIO2
+  Serial.print("Deactivate pump");
+  digitalWrite(GPIO_PIN, LOW);
+  Serial.print("sleep");
+  delay(600000); // Wait for 10 minutes
+  
   Serial.print("*");
 
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
 }
