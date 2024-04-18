@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include <user_interface.h>
 
-#define GPIO_PIN 13 // GPIO13/D7 is connected to pin 13 on ESP12
+#define GPIO_PIN 4 // GPIO4/D2 
+//apparently only D4 and D5 don't send a short pulse on reset
 #define ANALOG_PIN A0
 
 
@@ -16,17 +17,17 @@ uint32_t sleepCount;
 void setup() {
   Serial.begin(9600);
   //delay(1000);
-  pinMode(GPIO_PIN, OUTPUT);
 
 
   system_rtc_mem_read(RTC_BASE, &sleepCount, 4); // read counter
   sleepCount++;
   if (sleepCount > SLEEP_COUNTS_FOR_WATER) {
+    pinMode(GPIO_PIN, OUTPUT);
     //do watering and reset
     // Activate GPIO2
     Serial.println("Activate pump");
     digitalWrite(GPIO_PIN, HIGH);
-    delay(3000); // Wait for 3 seconds
+    delay(2500); // Wait for 2.5 seconds
     // Deactivate GPIO2
     Serial.println("Deactivate pump");
     digitalWrite(GPIO_PIN, LOW);
@@ -49,8 +50,8 @@ void setup() {
   yield();
   //Serial.end();
   Serial.flush();  
-  //ESP.deepSleep (3600e6); 1 hour
-  ESP.deepSleep(2e6); //deepsleep 2 seconds (86400 seconds - 86400 x 10e6 microseconds)
+  ESP.deepSleep (3600e6); //1 hour
+  //ESP.deepSleep(2e6); //deepsleep 2 seconds (86400 seconds - 86400 x 10e6 microseconds)
   delay(10);
 
 
