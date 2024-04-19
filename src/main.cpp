@@ -15,13 +15,13 @@ uint32_t sleepCount;
 
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(74880);
   //delay(1000);
 
 
   system_rtc_mem_read(RTC_BASE, &sleepCount, 4); // read counter
   sleepCount++;
-  if (sleepCount > SLEEP_COUNTS_FOR_WATER) {
+  if (sleepCount >= SLEEP_COUNTS_FOR_WATER) {
     pinMode(GPIO_PIN, OUTPUT);
     //do watering and reset
     // Activate GPIO2
