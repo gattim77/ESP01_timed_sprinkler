@@ -103,6 +103,7 @@ void connectToWiFi() {
   Serial.println(WiFi.localIP());
 }
 
+
 void writetoDB(int humidity, int counter){
 
   // Create JSON payload
