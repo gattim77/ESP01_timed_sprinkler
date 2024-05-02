@@ -79,7 +79,8 @@ void setup() {
 
   // Calculate time difference in seconds
   unsigned long timeDifference = getTimeDifference(nextRecurrenceTime);
-
+  Serial.print("time difference: ");
+  Serial.println(timeDifference);
   // if we are within 2 minutes from the next iteration the sprinkler is activated
   if (timeDifference<120) {
     sprinkle_action_trigger = 1;
@@ -100,7 +101,7 @@ void setup() {
         // Perform action for between 1801 and 3600 seconds
         wait_amount = 1800e6;
         break;
-      case 3601 ... 7200: // Between 3601 and 7200 seconds
+      case 3601 ... 10800: // Between 3601 and 7200 seconds
         // Perform action for between 3601 and 7200 seconds
         wait_amount = 3600e6;
         break;
@@ -230,18 +231,19 @@ HTTPClient http;
     String payload = http.getString();
     DynamicJsonDocument doc(1024);
     deserializeJson(doc, payload);
-
+    Serial.print("payload: ");
+    Serial.println(payload);
     // Extract configuration values
-    ScheduleHour = doc["Schedule_hour"];
+    ScheduleHour = doc["schedule_hour"];
     ScheduleMinutes = doc["schedule_minute"];
     SprinkleTimeDecSeconds = doc["sprinkle_decseconds"];
 
     // Print configuration values
     Serial.print("Schedule_hour: ");
     Serial.println(ScheduleHour);
-    Serial.print("Minute: ");
+    Serial.print("Schedule_Minute: ");
     Serial.println(ScheduleMinutes);
-    Serial.print("Seconds: ");
+    Serial.print("Sprinlkle_decSeconds: ");
     Serial.println(SprinkleTimeDecSeconds);
   } else {
     Serial.print("Error reading configuration. HTTP code: ");
@@ -262,6 +264,8 @@ unsigned long getNextRecurrenceTime() {
   int currentHour = hour(currentTime);
   int currentMinute = minute(currentTime);
   int currentSecond = second(currentTime);
+
+  Serial.printf("%02d:%02d:%02d - %20d\n", currentHour, currentMinute, currentSecond, currentTime);
 
   // Calculate the next recurrence time for today
   unsigned long targetTimeToday = currentTime;
