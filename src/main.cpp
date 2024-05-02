@@ -29,7 +29,8 @@ int SprinkleTimeDecSeconds = 20;
 
 WiFiUDP ntpUDP;
 //NTPClient timeClient(ntpUDP);
-const char* ntpServer = "pool.ntp.org";
+//const char* ntpServer = "pool.ntp.org";
+const char* ntpServer = "time.google.com";
 const long gmtOffset_sec = 3600; // GMT offset in seconds (CET is UTC+1)
 
 int sprinkle_action_trigger = 0;
@@ -51,7 +52,7 @@ void setup() {
 
   connectToWiFi();
 
-  // Initialize NTP client
+  //Initialize NTP client
   //timeClient.begin();
   //timeClient.setPoolServer(ntpServer);
   //timeClient.setTimeOffset(gmtOffset_sec);
@@ -61,14 +62,19 @@ void setup() {
   //unsigned long epochTime = timeClient.getEpochTime();
   
   // Set timezone and start NTP
-  configTime(0, 0, ntpServer);
+  configTime(1, 3600, ntpServer);
+  //Serial.println(ntpServer);
 
   // Wait for time to be synchronized
   while (time(nullptr) < 1000000000UL) {
     delay(1000);
     Serial.println("Waiting for time synchronization...");
+    Serial.print("Current time: ");
+    Serial.println(time(nullptr));
+    Serial.println(now());
   }
 
+  setTime(time(nullptr) + 3600*2); //adding +2:00 for timezone and daylight saving
 
   //system_rtc_mem_read(RTC_BASE, &sleepCount, 4); // read counter
   //sleepCount++;
@@ -138,7 +144,7 @@ void setup() {
     //sleepCount = 0;
   }
   // store the counter
-  system_rtc_mem_write(RTC_BASE, &sleepCount, 4); // write counter
+  //system_rtc_mem_write(RTC_BASE, &sleepCount, 4); // write counter
   
   //Serial.println(sleepCount);
 
@@ -149,7 +155,8 @@ void setup() {
   yield();
   //Serial.end();
   Serial.flush();  
-  ESP.deepSleep (3600e6); //1 hour
+  //ESP.deepSleep (3600e6); //1 hour
+  ESP.deepSleep (wait_amount); //the amount set above
   //ESP.deepSleep(2e6); //deepsleep 2 seconds (86400 seconds - 86400 x 10e6 microseconds)
   delay(10);
 
