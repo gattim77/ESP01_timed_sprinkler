@@ -26,12 +26,13 @@ WiFiClient wifiClient; // Create a WiFiClient object
 int ScheduleHour = 8;
 int ScheduleMinutes = 0;
 int SprinkleTimeDecSeconds = 20;
+unsigned long timezone_seconds_offset = 3600; //by default 1 hr = CET
 
 WiFiUDP ntpUDP;
 //NTPClient timeClient(ntpUDP);
 //const char* ntpServer = "pool.ntp.org";
 const char* ntpServer = "time.google.com";
-const long gmtOffset_sec = 3600; // GMT offset in seconds (CET is UTC+1)
+//const long gmtOffset_sec = 3600; // GMT offset in seconds (CET is UTC+1)
 
 int sprinkle_action_trigger = 0;
 double wait_amount=0;
@@ -52,6 +53,10 @@ void setup() {
 
   connectToWiFi();
 
+
+  readConfigurationFromDB();
+  
+
   //Initialize NTP client
   //timeClient.begin();
   //timeClient.setPoolServer(ntpServer);
@@ -62,7 +67,7 @@ void setup() {
   //unsigned long epochTime = timeClient.getEpochTime();
   
   // Set timezone and start NTP
-  configTime(1, 3600, ntpServer);
+  //configTime(1, 3600, ntpServer);
   //Serial.println(ntpServer);
 
   // Wait for time to be synchronized
@@ -74,11 +79,10 @@ void setup() {
     Serial.println(now());
   }
 
-  setTime(time(nullptr) + 3600*2); //adding +2:00 for timezone and daylight saving
+  setTime(time(nullptr) + timezone_seconds_offset); //adding +2:00 for timezone and daylight saving
 
   //system_rtc_mem_read(RTC_BASE, &sleepCount, 4); // read counter
   //sleepCount++;
-  readConfigurationFromDB();
   
   // Calculate next recurrence time
   unsigned long nextRecurrenceTime = getNextRecurrenceTime();
@@ -257,7 +261,7 @@ HTTPClient http;
     ScheduleHour = doc["schedule_hour"];
     ScheduleMinutes = doc["schedule_minute"];
     SprinkleTimeDecSeconds = doc["sprinkle_decseconds"];
-
+    timezone_seconds_offset = doc["timezone_offset"];
     // Print configuration values
     Serial.print("Schedule_hour: ");
     Serial.println(ScheduleHour);
@@ -265,6 +269,9 @@ HTTPClient http;
     Serial.println(ScheduleMinutes);
     Serial.print("Sprinlkle_decSeconds: ");
     Serial.println(SprinkleTimeDecSeconds);
+    Serial.print("timezone_seconds_offset: ");
+    Serial.println(timezone_seconds_offset);
+
   } else {
     Serial.print("Error reading configuration. HTTP code: ");
     Serial.println(httpCode);
