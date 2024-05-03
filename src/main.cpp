@@ -32,6 +32,10 @@ WiFiUDP ntpUDP;
 //NTPClient timeClient(ntpUDP);
 //const char* ntpServer = "pool.ntp.org";
 const char* ntpServer = "time.google.com";
+const char* ntpServer2 = "pool.ntp.org";
+const char* ntpServer3 = "time.windows.com";
+
+
 //const long gmtOffset_sec = 3600; // GMT offset in seconds (CET is UTC+1)
 
 int sprinkle_action_trigger = 0;
@@ -67,7 +71,7 @@ void setup() {
   //unsigned long epochTime = timeClient.getEpochTime();
   
   // Set timezone and start NTP
-  //configTime(1, 3600, ntpServer);
+  configTime(0, 0, ntpServer,ntpServer2,ntpServer3);
   //Serial.println(ntpServer);
 
   // Wait for time to be synchronized
