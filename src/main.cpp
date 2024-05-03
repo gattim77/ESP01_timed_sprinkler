@@ -87,36 +87,49 @@ void setup() {
   unsigned long timeDifference = getTimeDifference(nextRecurrenceTime);
   Serial.print("time difference: ");
   Serial.println(timeDifference);
-  // if we are within 2 minutes from the next iteration the sprinkler is activated
-  if (timeDifference<120) {
+  // if we are within 10 seconds from the next iteration the sprinkler is activated
+  //+- 10 seconds
+  if (timeDifference<10 || timeDifference>86390) { 
     sprinkle_action_trigger = 1;
     wait_amount = 7200e6; //wait two hours
-    writetoDB (1,wait_amount/100);
+    writetoDB (1,wait_amount/1e6);
   } else {
     // these will progressivley shorten the timer to get better precision
     switch (timeDifference) {
-      case 0 ... 900: // Less than or equal to 900 seconds
+      case 0 ... 60: // Less than or equal to 900 seconds
         // Perform action for less than or equal to 900 seconds
-        wait_amount = (timeDifference-5) *10e6;
+        wait_amount = (timeDifference-5) *1e6;
+        break;      
+      case 61 ... 200: // Less than or equal to 900 seconds
+        // Perform action for less than or equal to 900 seconds
+        wait_amount = 55e6;
+        break;      
+      case 201 ... 450: // Less than or equal to 900 seconds
+        // Perform action for less than or equal to 900 seconds
+        wait_amount = 170e6;
+        break;      
+      case 451 ... 900: // Less than or equal to 900 seconds
+        // Perform action for less than or equal to 900 seconds
+        wait_amount = 420e6;
         break;
       case 901 ... 1800: // Between 901 and 1800 seconds
         // Perform action for between 901 and 1800 seconds
-        wait_amount = 900e6;
+        wait_amount = 870e6;
         break;
       case 1801 ... 3600: // Between 1801 and 3600 seconds
         // Perform action for between 1801 and 3600 seconds
-        wait_amount = 1800e6;
+        wait_amount = 1770e6;
         break;
-      case 3601 ... 10800: // Between 3601 and 7200 seconds
-        // Perform action for between 3601 and 7200 seconds
-        wait_amount = 3600e6;
+      case 3601 ... 10800: // Between 3601 and 10800 seconds
+        // Perform action for between 3601 and 10800 seconds
+        wait_amount = 3570e6;
         break;
       default:
         // Perform default action if timeDifference doesn't match any case
         wait_amount = 7200e6; //wait two hours
         break;
     }
-    writetoDB (0,wait_amount/100);
+    writetoDB (0,wait_amount/1e6);
   }
 
 
