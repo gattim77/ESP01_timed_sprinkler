@@ -18,7 +18,7 @@
 #define SLEEP_COUNTS_FOR_WATER 24 // water every 24 hours
 const unsigned long WIFI_TIMEOUT = 15000; // 15 seconds
 
-const char* SERVER_URL = "http://192.168.178.68/receive_data.php";
+const char* SERVER_URL = "http://192.168.178.68/send_data.php";
 const char* CONFIG_SERVER_URL = "http://192.168.178.68/configuration.php";
 
 WiFiClient wifiClient; // Create a WiFiClient object
@@ -43,7 +43,7 @@ double wait_amount=0;
 
 //functions defintions
 void connectToWiFi(); 
-void writetoDB(int humidity, int counter);
+void writetoDB(int sprinkle_action, int sprinkle_decseconds, int sleep_time, int remaining_time);
 void readConfigurationFromDB();
 unsigned long getNextRecurrenceTime();
 unsigned long getTimeDifference(unsigned long targetTime);
@@ -100,7 +100,7 @@ void setup() {
   if (timeDifference<10 || timeDifference>86390) { 
     sprinkle_action_trigger = 1;
     wait_amount = 7200e6; //wait two hours
-    writetoDB (1,wait_amount/1e6);
+    writetoDB (1,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
   } else {
     // these will progressivley shorten the timer to get better precision
     switch (timeDifference) {
@@ -137,7 +137,7 @@ void setup() {
         wait_amount = 7200e6; //wait two hours
         break;
     }
-    writetoDB (0,wait_amount/1e6);
+    writetoDB (0,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
   }
 
 
@@ -149,8 +149,8 @@ void setup() {
   //  writetoDB (0,sleepCount);
   //}
 
-
-  if (sleepCount > SLEEP_COUNTS_FOR_WATER) {
+// if the action trigger is set, water the plant
+  if (sprinkle_action_trigger == 1) {
     pinMode(GPIO_PIN, OUTPUT);
     //do watering and reset
     // Activate GPIO2
@@ -214,12 +214,14 @@ void connectToWiFi() {
 }
 
 
-void writetoDB(int humidity, int counter){
+void writetoDB(int sprinkle_action, int sprinkle_decseconds, int sleep_time, int remaining_time){
 
   // Create JSON payload
   StaticJsonDocument<200> jsonDocument;
-  jsonDocument["humidity"] = humidity;
-  jsonDocument["action_log"] = counter;
+  jsonDocument["sprinkle_action"] = sprinkle_action;
+  jsonDocument["sprinkle_decseconds"] = sprinkle_decseconds;
+  jsonDocument["sleep_time"] = sleep_time;
+  jsonDocument["remaining_time"] = remaining_time;
 
   // Serialize JSON to string
   String jsonString;
