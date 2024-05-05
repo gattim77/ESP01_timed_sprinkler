@@ -97,7 +97,7 @@ void setup() {
   Serial.println(timeDifference);
   // if we are within 10 seconds from the next iteration the sprinkler is activated
   //+- 10 seconds
-  if (timeDifference<10 || timeDifference>86390) { 
+  if (timeDifference<20 || timeDifference>86380) { 
     sprinkle_action_trigger = 1;
     wait_amount = 7200e6; //wait two hours
     writetoDB (1,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
@@ -156,7 +156,7 @@ void setup() {
     // Activate GPIO2
     Serial.println("Activate pump");
     digitalWrite(GPIO_PIN, HIGH);
-    delay(SprinkleTimeDecSeconds*10); // Wait (time is in decimal seconds)
+    delay(SprinkleTimeDecSeconds*100); // Wait (time is in decimal seconds) delay is in milliseconds
     // Deactivate GPIO2
     Serial.println("Deactivate pump");
     digitalWrite(GPIO_PIN, LOW);
