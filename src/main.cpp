@@ -23,9 +23,9 @@ const char* CONFIG_SERVER_URL = "http://192.168.178.68/configuration.php";
 
 WiFiClient wifiClient; // Create a WiFiClient object
 
-int ScheduleHour = 8;
+int ScheduleHour = 8;  // by default sprinkle at 8AM
 int ScheduleMinutes = 0;
-int SprinkleTimeDecSeconds = 20;
+int SprinkleTimeDecSeconds = 20; // deafult 2 seconds sprinkle time
 unsigned long timezone_seconds_offset = 3600; //by default 1 hr = CET
 
 WiFiUDP ntpUDP;
