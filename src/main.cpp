@@ -9,6 +9,10 @@
 
 
 
+#define SENSOR_ID 1
+
+#define LOG_LEVEL 1 //0 write in DB only when sprinkle is activated, 1 log in DB intermediate actions - to be updated to be read from DB
+
 #define GPIO_PIN 4 // GPIO4/D2 
 //apparently only D4 and D5 don't send a short pulse on reset
 #define ANALOG_PIN A0
@@ -137,7 +141,7 @@ void setup() {
         wait_amount = 7200e6; //wait two hours
         break;
     }
-    writetoDB (0,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
+    if (LOG_LEVEL == 1) (0,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
   }
 
 
