@@ -142,7 +142,7 @@ void setup() {
         wait_amount = 7200e6; //wait two hours
         break;
     }
-    if (Log_level == 1) (0,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
+    if (Log_level == 1) writetoDB(SENSOR_ID,0,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
     //0 is for no action
   }
 
