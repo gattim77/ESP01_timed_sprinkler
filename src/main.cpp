@@ -20,8 +20,10 @@
 #define SLEEP_COUNTS_FOR_WATER 24 // water every 24 hours
 const unsigned long WIFI_TIMEOUT = 15000; // 15 seconds
 
-const char* SERVER_URL = "http://192.168.178.68/send_data.php";
-const char* CONFIG_SERVER_URL = "http://192.168.178.68/configuration.php";
+//const char* SERVER_URL = "http://192.168.178.68/send_data.php";
+const char* SERVER_URL = "http://" SERVER_IP "/send_data.php";
+//const char* CONFIG_SERVER_URL = "http://192.168.178.68/configuration.php";
+const char* CONFIG_SERVER_URL = "http://" SERVER_IP "configuration.php";
 
 WiFiClient wifiClient; // Create a WiFiClient object
 
