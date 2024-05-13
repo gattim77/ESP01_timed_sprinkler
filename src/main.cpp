@@ -9,6 +9,8 @@
 
 
 
+#define SENSOR_ID 1
+
 #define GPIO_PIN 4 // GPIO4/D2 
 //apparently only D4 and D5 don't send a short pulse on reset
 #define ANALOG_PIN A0
@@ -18,10 +20,15 @@
 #define SLEEP_COUNTS_FOR_WATER 24 // water every 24 hours
 const unsigned long WIFI_TIMEOUT = 15000; // 15 seconds
 
-const char* SERVER_URL = "http://192.168.178.68/send_data.php";
-const char* CONFIG_SERVER_URL = "http://192.168.178.68/configuration.php";
+//const char* SERVER_URL = "http://192.168.178.68/send_data.php";
+const char* SERVER_URL = "http://" SERVER_IP "/send_data.php";
+//const char* CONFIG_SERVER_URL = "http://192.168.178.68/configuration.php";
+const char* CONFIG_SERVER_URL = "http://" SERVER_IP "configuration.php";
 
 WiFiClient wifiClient; // Create a WiFiClient object
+
+//log_level: 0 write in DB only when sprinkle is activated, 1 log in DB intermediate actions - to be updated to be read from DB
+int Log_level = 1; //by defaults it logs everything
 
 int ScheduleHour = 8;  // by default sprinkle at 8AM
 int ScheduleMinutes = 0;
@@ -43,7 +50,7 @@ double wait_amount=0;
 
 //functions defintions
 void connectToWiFi(); 
-void writetoDB(int sprinkle_action, int sprinkle_decseconds, int sleep_time, int remaining_time);
+void writetoDB(int sensor_id, int sprinkle_action, int sprinkle_decseconds, int sleep_time, int remaining_time);
 void readConfigurationFromDB();
 unsigned long getNextRecurrenceTime();
 unsigned long getTimeDifference(unsigned long targetTime);
@@ -100,7 +107,7 @@ void setup() {
   if (timeDifference<20 || timeDifference>86380) { 
     sprinkle_action_trigger = 1;
     wait_amount = 7200e6; //wait two hours
-    writetoDB (1,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
+    writetoDB (SENSOR_ID, 1,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
   } else {
     // these will progressivley shorten the timer to get better precision
     switch (timeDifference) {
@@ -137,7 +144,8 @@ void setup() {
         wait_amount = 7200e6; //wait two hours
         break;
     }
-    writetoDB (0,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
+    if (Log_level == 1) writetoDB(SENSOR_ID,0,SprinkleTimeDecSeconds,wait_amount/1e6,timeDifference);
+    //0 is for no action
   }
 
 
@@ -214,10 +222,11 @@ void connectToWiFi() {
 }
 
 
-void writetoDB(int sprinkle_action, int sprinkle_decseconds, int sleep_time, int remaining_time){
+void writetoDB(int sensor_id, int sprinkle_action, int sprinkle_decseconds, int sleep_time, int remaining_time){
 
   // Create JSON payload
   StaticJsonDocument<200> jsonDocument;
+  jsonDocument["sensor_id"] = sensor_id;
   jsonDocument["sprinkle_action"] = sprinkle_action;
   jsonDocument["sprinkle_decseconds"] = sprinkle_decseconds;
   jsonDocument["sleep_time"] = sleep_time;
@@ -253,7 +262,11 @@ void readConfigurationFromDB() {
 HTTPClient http;
 
   // Make GET request to API
-  http.begin(wifiClient, CONFIG_SERVER_URL);
+
+  String url = String(CONFIG_SERVER_URL) + "?SENSOR_ID=" + String(SENSOR_ID); // Assuming SENSOR_ID is an integer variable
+
+
+  http.begin(wifiClient, url);
   int httpCode = http.GET();
 
   if (httpCode > 0) {
@@ -268,6 +281,7 @@ HTTPClient http;
     ScheduleMinutes = doc["schedule_minute"];
     SprinkleTimeDecSeconds = doc["sprinkle_decseconds"];
     timezone_seconds_offset = doc["timezone_offset"];
+    Log_level = doc["log_level"]; 
     // Print configuration values
     Serial.print("Schedule_hour: ");
     Serial.println(ScheduleHour);
@@ -277,6 +291,9 @@ HTTPClient http;
     Serial.println(SprinkleTimeDecSeconds);
     Serial.print("timezone_seconds_offset: ");
     Serial.println(timezone_seconds_offset);
+    Serial.print("log_level: ");
+    Serial.println(Log_level);
+    
 
   } else {
     Serial.print("Error reading configuration. HTTP code: ");
