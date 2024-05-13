@@ -23,6 +23,7 @@ const char* CONFIG_SERVER_URL = "http://192.168.178.68/configuration.php";
 
 WiFiClient wifiClient; // Create a WiFiClient object
 
+
 int ScheduleHour = 8;  // by default sprinkle at 8AM
 int ScheduleMinutes = 0;
 int SprinkleTimeDecSeconds = 20; // deafult 2 seconds sprinkle time
