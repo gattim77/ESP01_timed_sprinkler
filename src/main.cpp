@@ -9,7 +9,7 @@
 
 
 
-#define SENSOR_ID 1
+#define SENSOR_ID 2
 
 #define GPIO_PIN 4 // GPIO4/D2 
 //apparently only D4 and D5 don't send a short pulse on reset
@@ -23,7 +23,7 @@ const unsigned long WIFI_TIMEOUT = 15000; // 15 seconds
 //const char* SERVER_URL = "http://192.168.178.68/send_data.php";
 const char* SERVER_URL = "http://" SERVER_IP "/send_data.php";
 //const char* CONFIG_SERVER_URL = "http://192.168.178.68/configuration.php";
-const char* CONFIG_SERVER_URL = "http://" SERVER_IP "configuration.php";
+const char* CONFIG_SERVER_URL = "http://" SERVER_IP "/configuration.php";
 
 WiFiClient wifiClient; // Create a WiFiClient object
 
@@ -266,6 +266,8 @@ HTTPClient http;
 
   String url = String(CONFIG_SERVER_URL) + "?SENSOR_ID=" + String(SENSOR_ID); // Assuming SENSOR_ID is an integer variable
 
+  Serial.print("URL: ");
+  Serial.println(url);
 
   http.begin(wifiClient, url);
   int httpCode = http.GET();
