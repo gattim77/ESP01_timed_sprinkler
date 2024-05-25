@@ -9,7 +9,7 @@
 
 
 
-#define SENSOR_ID 2
+#define SENSOR_ID 1
 
 #define GPIO_PIN 4 // GPIO4/D2 
 //apparently only D4 and D5 don't send a short pulse on reset
