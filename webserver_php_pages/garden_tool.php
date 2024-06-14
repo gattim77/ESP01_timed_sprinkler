@@ -156,7 +156,7 @@
 		include 'db_config.php';
 
 		// Fetch log data from database
-		$sql = "SELECT * FROM sprinkle_log ORDER BY timestamp DESC";
+		$sql = "SELECT * FROM sprinkle_log ORDER BY timestamp DESC LIMIT 50";
 		$result = $conn->query($sql);
 
 		if ($result->num_rows > 0) {
