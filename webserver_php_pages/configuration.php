@@ -5,6 +5,14 @@ include 'db_config.php';
 // Set default value for SENSOR_ID if not provided
 $sensor_id = isset($_GET['SENSOR_ID']) ? intval($_GET['SENSOR_ID']) : 1;
 
+//Patch for the timezone
+$timezonePath = realpath('/etc/localtime');
+$prefix = '/usr/share/zoneinfo/';
+
+if ($timezonePath !== false &&
+    strpos($timezonePath, $prefix) === 0) {
+    date_default_timezone_set(substr($timezonePath, strlen($prefix)));
+}
 
 // Get the local timezone offset in seconds
 $timezone_offset_seconds = intval(date('Z'));
