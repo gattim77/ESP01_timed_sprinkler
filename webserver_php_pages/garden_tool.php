@@ -95,9 +95,14 @@
 </head>
 <body>
     <div class="top-bar">
-        <a href="#" id="configure-tab" onclick="showSection('configure')">Configure</a>
+        <!--
+		<a href="#" id="configure-tab" onclick="showSection('configure')">Configure</a>
         <a href="#" id="log-tab" onclick="showSection('log')">Log</a>
-        <button onclick="openNewSprinklerPopup()">New Sprinkler</button> <!-- New Sprinkler button -->
+		-->
+		<a href="#" id="configure-tab" onclick="showSection('configure'); return false;">Configure</a>
+		<a href="#" id="log-tab" onclick="showSection('log'); return false;">Log</a>
+		
+		<button onclick="openNewSprinklerPopup()">New Sprinkler</button> <!-- New Sprinkler button -->
         <button onclick="openDeleteSprinklerPopup()">Delete Sprinkler</button> <!-- New Sprinkler button -->
     </div>
 
